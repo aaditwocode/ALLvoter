@@ -1,16 +1,19 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-const mongoURL = process.env.MONGODB_URL;
+// Try local MongoDB first, then fallback to Atlas
+const mongoURL = process.env.MONGODB_URL_LOCAL || process.env.MONGODB_URL;
 
 if (!mongoURL) {
-  throw new Error("MONGODB_URL is not set in environment variables!");
+  throw new Error("MONGODB_URL or MONGODB_URL_LOCAL must be set in environment variables!");
 }
 
+console.log('🔗 Attempting to connect to MongoDB...');
 mongoose.connect(mongoURL)
   .then(() => console.log('✅ Connected to MongoDB server'))
   .catch(err => {
-    console.error('❌ MongoDB connection error:', err);
+    console.error('❌ MongoDB connection error:', err.message);
+    console.error('💡 Tip: Check your MongoDB connection string or ensure MongoDB is running');
     process.exit(1); // Exit if DB connection fails
   });
 
