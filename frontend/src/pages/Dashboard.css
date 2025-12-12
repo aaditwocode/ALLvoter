@@ -1,0 +1,249 @@
+.dashboard-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #FF9933 0%, #FFFFFF 50%, #138808 100%);
+}
+
+.dashboard-nav {
+  background: white;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.nav-logo {
+  font-size: 32px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.nav-link {
+  padding: 8px 16px;
+  background: none;
+  border: 2px solid var(--green);
+  color: var(--green);
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  background: var(--green);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.nav-link.logout {
+  border-color: #c33;
+  color: #c33;
+}
+
+.nav-link.logout:hover {
+  background: #c33;
+  color: white;
+}
+
+.dashboard-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 40px;
+  color: white;
+}
+
+.dashboard-header h1 {
+  font-size: 42px;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-header p {
+  font-size: 18px;
+  opacity: 0.9;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+.dashboard-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+}
+
+.dashboard-card h2 {
+  color: var(--navy);
+  margin-bottom: 20px;
+  font-size: 22px;
+  border-bottom: 2px solid var(--green);
+  padding-bottom: 10px;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.action-btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, var(--saffron), var(--green));
+  color: white;
+}
+
+.action-btn.secondary {
+  background: linear-gradient(135deg, var(--green), #0d6e05);
+  color: white;
+}
+
+.action-btn.admin {
+  background: linear-gradient(135deg, var(--navy), #4a4aff);
+  color: white;
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.status-info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.status-label {
+  font-weight: 500;
+  color: #666;
+}
+
+.status-value {
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.status-value.admin {
+  color: var(--navy);
+}
+
+.status-value.voted {
+  color: var(--green);
+}
+
+.status-value.not-voted {
+  color: var(--saffron);
+}
+
+.candidates-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.candidate-preview-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid var(--green);
+}
+
+.candidate-name {
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.candidate-party {
+  color: var(--green);
+  font-weight: 500;
+}
+
+.view-more {
+  text-align: center;
+  color: var(--green);
+  cursor: pointer;
+  font-weight: 500;
+  margin-top: 10px;
+  text-decoration: underline;
+}
+
+.view-more:hover {
+  color: var(--saffron);
+}
+
+.dashboard-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-size: 24px;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .dashboard-nav {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

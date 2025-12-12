@@ -5,6 +5,20 @@ require('dotenv').config();
 
 const bodyParser = require('body-parser'); 
 app.use(bodyParser.json()); // req.body
+
+// CORS middleware
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 
 // Add a root route

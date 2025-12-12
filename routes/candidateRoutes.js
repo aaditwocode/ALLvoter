@@ -41,7 +41,7 @@ router.post('/', jwtAuthMiddleware, async (req, res) =>{
 
 router.put('/:candidateID', jwtAuthMiddleware, async (req, res)=>{
     try{
-        if(!checkAdminRole(req.user.id))
+        if(!(await checkAdminRole(req.user.id)))
             return res.status(403).json({message: 'user does not have admin role'});
         
         const candidateID = req.params.candidateID; // Extract the id from the URL parameter
@@ -66,7 +66,7 @@ router.put('/:candidateID', jwtAuthMiddleware, async (req, res)=>{
 
 router.delete('/:candidateID', jwtAuthMiddleware, async (req, res)=>{
     try{
-        if(!checkAdminRole(req.user.id))
+        if(!(await checkAdminRole(req.user.id)))
             return res.status(403).json({message: 'user does not have admin role'});
         
         const candidateID = req.params.candidateID; // Extract the id from the URL parameter
@@ -148,11 +148,11 @@ router.get('/vote/count', async (req, res) => {
     }
 });
 
-// Get List of all candidates with only name and party fields
+// Get List of all candidates with name, party, and _id fields
 router.get('/', async (req, res) => {
     try {
-        // Find all candidates and select only the name and party fields, excluding _id
-        const candidates = await Candidate.find({}, 'name party -_id');
+        // Find all candidates and select name, party, and _id fields
+        const candidates = await Candidate.find({}, 'name party _id age voteCount');
 
         // Return the list of candidates
         res.status(200).json(candidates);

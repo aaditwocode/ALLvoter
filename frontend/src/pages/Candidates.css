@@ -1,0 +1,139 @@
+.candidates-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #FF9933 0%, #FFFFFF 50%, #138808 100%);
+}
+
+.candidates-nav {
+  background: white;
+  padding: 20px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.candidates-nav h1 {
+  color: var(--navy);
+  font-size: 28px;
+}
+
+.back-btn,
+.vote-count-btn {
+  padding: 10px 20px;
+  background: var(--green);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover,
+.vote-count-btn:hover {
+  background: #0d6e05;
+  transform: translateY(-2px);
+}
+
+.candidates-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.candidates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.candidate-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.candidate-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.candidate-info h3 {
+  color: var(--navy);
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.candidate-party {
+  color: var(--green);
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.vote-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, var(--saffron), var(--green));
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.vote-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.voted-badge,
+.admin-badge {
+  padding: 10px;
+  background: #f0f0f0;
+  color: #666;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.no-candidates {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.no-candidates p {
+  font-size: 18px;
+  color: #666;
+}
+
+.candidates-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-size: 24px;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .candidates-nav {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .candidates-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
