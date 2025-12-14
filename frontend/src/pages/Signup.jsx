@@ -54,7 +54,7 @@ function Signup() {
     const result = await signup({
       ...formData,
       age: parseInt(formData.age),
-      aadharCardNumber: parseInt(formData.aadharCardNumber)
+      aadharCardNumber: formData.aadharCardNumber
     })
     
     if (result.success) {

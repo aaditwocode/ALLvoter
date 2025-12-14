@@ -3,7 +3,12 @@
 
 import api from './api'
 
-const GEMINI_MODEL = import.meta.env.VITE_GEMINI_MODEL || 'gemini-pro'
+// 1. Get model from Env or default to stable "gemini-1.5-flash"
+const RAW_MODEL = import.meta.env.VITE_GEMINI_MODEL || 'gemini-1.5-flash'
+
+// 2. Safety Fix: The API often rejects "-latest". This line removes it automatically.
+// If RAW_MODEL is "gemini-1.5-pro-latest", this converts it to "gemini-1.5-pro"
+const GEMINI_MODEL = RAW_MODEL.replace(/-latest$/, '')
 
 export const sendMessageToGemini = async (message, conversationHistory = []) => {
   if (!message || !message.trim()) {
@@ -16,7 +21,7 @@ export const sendMessageToGemini = async (message, conversationHistory = []) => 
   try {
     console.log('📤 Sending message to backend Gemini API:', {
       message: message.substring(0, 50) + '...',
-      model: GEMINI_MODEL,
+      model: GEMINI_MODEL, // This will now be the clean version
       historyLength: conversationHistory.length
     })
 
@@ -68,4 +73,3 @@ export const sendMessageToGemini = async (message, conversationHistory = []) => 
     }
   }
 }
-

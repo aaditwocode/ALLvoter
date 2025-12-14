@@ -86,6 +86,29 @@ router.delete('/:candidateID', jwtAuthMiddleware, async (req, res)=>{
 })
 
 // let's start voting
+
+// vote count - placed before /vote/:candidateID to avoid route collision with 'count'
+router.get('/vote/count', async (req, res) => {
+    try{
+        // Find all candidates and sort them by voteCount in descending order
+        const candidate = await Candidate.find().sort({voteCount: 'desc'});
+
+        // Map the candidates to only return their name and voteCount
+        const voteRecord = candidate.map((data)=>{
+            return {
+                party: data.party,
+                count: data.voteCount
+            }
+        });
+
+        return res.status(200).json(voteRecord);
+    }catch(err){
+        console.log(err);
+        res.status(500).json({error: 'Internal Server Error'});
+    }
+});
+
+// let's start voting
 router.get('/vote/:candidateID', jwtAuthMiddleware, async (req, res)=>{
     // no admin can vote
     // user can only vote once
@@ -124,27 +147,6 @@ router.get('/vote/:candidateID', jwtAuthMiddleware, async (req, res)=>{
     }catch(err){
         console.log(err);
         return res.status(500).json({error: 'Internal Server Error'});
-    }
-});
-
-// vote count 
-router.get('/vote/count', async (req, res) => {
-    try{
-        // Find all candidates and sort them by voteCount in descending order
-        const candidate = await Candidate.find().sort({voteCount: 'desc'});
-
-        // Map the candidates to only return their name and voteCount
-        const voteRecord = candidate.map((data)=>{
-            return {
-                party: data.party,
-                count: data.voteCount
-            }
-        });
-
-        return res.status(200).json(voteRecord);
-    }catch(err){
-        console.log(err);
-        res.status(500).json({error: 'Internal Server Error'});
     }
 });
 

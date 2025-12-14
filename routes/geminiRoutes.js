@@ -2,20 +2,28 @@ const express = require('express');
 const router = express.Router();
 require('dotenv').config();
 
-// Model mapping for Gemini API
+// Model mapping for Gemini API — prefer a safe supported default
 const MODEL_MAP = {
     'gemini-1.5-flash': 'gemini-1.5-flash-latest',
     'gemini-1.5-flash-latest': 'gemini-1.5-flash-latest',
-    'gemini-1.5-pro': 'gemini-1.5-pro-latest',
-    'gemini-1.5-pro-latest': 'gemini-1.5-pro-latest',
-    'gemini-pro': 'gemini-pro',
-    'gemini-1.0-pro': 'gemini-1.0-pro',
+    // map older/ambiguous names to a known supported model
+    'gemini-1.5-pro': 'gemini-1.5-flash-latest',
+    'gemini-1.5-pro-latest': 'gemini-1.5-flash-latest',
+    'gemini-pro': 'gemini-1.5-flash-latest',
+    'gemni-pro': 'gemini-1.5-flash-latest',
+    'gemini-1.0-pro': 'gemini-1.0-pro'
 };
 
 const normalizeModel = (model) => {
-    if (!model) return MODEL_MAP['gemini-1.5-flash'];
-    const lower = model.toLowerCase().trim();
-    return MODEL_MAP[lower] || model;
+    const defaultModel = MODEL_MAP['gemini-1.5-flash'];
+    if (!model) return defaultModel;
+    const lower = String(model).toLowerCase().trim();
+    if (MODEL_MAP[lower]) return MODEL_MAP[lower];
+    // try stripping spaces/extra chars
+    const cleaned = lower.replace(/[^a-z0-9.-]/g, '');
+    if (MODEL_MAP[cleaned]) return MODEL_MAP[cleaned];
+    console.warn(`⚠️ Requested Gemini model "${model}" is not recognized. Falling back to ${defaultModel}`);
+    return defaultModel;
 };
 
 // POST /gemini/chat - Proxy Gemini API calls
