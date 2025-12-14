@@ -14,9 +14,20 @@ router.post('/signup', async (req, res) =>{
             return res.status(400).json({ error: 'Admin user already exists' });
         }
 
-        // Validate Aadhar Card Number must have exactly 12 digit
-        if (!/^\d{12}$/.test(data.aadharCardNumber)) {
+        // Validate Aadhar Card Number must have exactly 12 digits
+        const aadharStr = String(data.aadharCardNumber);
+        if (!/^\d{12}$/.test(aadharStr)) {
             return res.status(400).json({ error: 'Aadhar Card Number must be exactly 12 digits' });
+        }
+        
+        // Validate required fields
+        if (!data.name || !data.age || !data.address || !data.password) {
+            return res.status(400).json({ error: 'Name, age, address, and password are required' });
+        }
+        
+        // Validate age
+        if (data.age < 18) {
+            return res.status(400).json({ error: 'You must be at least 18 years old to vote' });
         }
 
         // Check if a user with the same Aadhar Card Number already exists
@@ -41,8 +52,26 @@ router.post('/signup', async (req, res) =>{
         res.status(200).json({response: response, token: token});
     }
     catch(err){
-        console.log(err);
-        res.status(500).json({error: 'Internal Server Error'});
+        console.error('Signup error:', err);
+        
+        // Handle duplicate key error (MongoDB unique constraint)
+        if (err.code === 11000) {
+            return res.status(400).json({ 
+                error: 'User with this Aadhar Card Number already exists' 
+            });
+        }
+        
+        // Handle validation errors
+        if (err.name === 'ValidationError') {
+            const errors = Object.values(err.errors).map(e => e.message).join(', ');
+            return res.status(400).json({ error: errors });
+        }
+        
+        // Generic error
+        res.status(500).json({
+            error: err.message || 'Internal Server Error',
+            details: process.env.NODE_ENV === 'development' ? err.stack : undefined
+        });
     }
 })
 
