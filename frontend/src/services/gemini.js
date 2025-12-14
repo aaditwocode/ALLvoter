@@ -1,93 +1,70 @@
 // Google Gemini API Service
-// Make sure to add your Google Gemini API key in the .env file
+// This service now uses the backend API route for better security and CORS handling
 
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || ''
+import api from './api'
 
-// Normalize common model names to canonical API model IDs
-const MODEL_MAP = {
-  'gemini-1.5-flash': 'gemini-1.5-flash-latest',
-  'gemini-1.5-flash-latest': 'gemini-1.5-flash-latest',
-  'gemini-1.5-pro': 'gemini-1.5-pro-latest',
-  'gemini-1.5-pro-latest': 'gemini-1.5-pro-latest',
-  'gemini-pro': 'gemini-pro',
-  'gemini-1.0-pro': 'gemini-1.0-pro',
-}
-
-const normalizeModel = (model) => {
-  if (!model) return MODEL_MAP['gemini-1.5-flash'] // default
-  const lower = model.toLowerCase().trim()
-  return MODEL_MAP[lower] || model // fall back to user value if unknown
-}
-
-const GEMINI_MODEL_RAW = import.meta.env.VITE_GEMINI_MODEL || 'gemini-1.5-flash'
-const GEMINI_MODEL = normalizeModel(GEMINI_MODEL_RAW)
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`
+const GEMINI_MODEL = import.meta.env.VITE_GEMINI_MODEL || 'gemini-pro'
 
 export const sendMessageToGemini = async (message, conversationHistory = []) => {
-  if (!GEMINI_API_KEY) {
-    console.error('⚠️ Gemini API key not found. Please set VITE_GEMINI_API_KEY in .env file')
+  if (!message || !message.trim()) {
     return {
       success: false,
-      error: 'Gemini API key not configured'
+      error: 'Message is required'
     }
   }
 
   try {
-    // Prepare the conversation context
-    const contents = [
-      {
-        role: 'user',
-        parts: [{ text: 'You are a helpful assistant for the ALLvoter Indian voting system. Help users with questions about voting, candidates, and the platform.' }]
-      },
-      ...conversationHistory.map(msg => ({
-        role: msg.role === 'user' ? 'user' : 'model',
-        parts: [{ text: msg.text }]
-      })),
-      {
-        role: 'user',
-        parts: [{ text: message }]
-      }
-    ]
+    console.log('📤 Sending message to backend Gemini API:', {
+      message: message.substring(0, 50) + '...',
+      model: GEMINI_MODEL,
+      historyLength: conversationHistory.length
+    })
 
-    const response = await fetch(GEMINI_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: contents
+    // Call backend Gemini route instead of calling Gemini API directly
+    const response = await api.post('/gemini/chat', {
+      message: message.trim(),
+      conversationHistory: conversationHistory,
+      model: GEMINI_MODEL
+    })
+
+    if (response.data.success) {
+      console.log('✅ Gemini Response received:', {
+        messageLength: message.length,
+        replyLength: response.data.reply?.length || 0,
+        usage: response.data.usage
       })
-    })
 
-    if (!response.ok) {
-      const errorData = await response.json()
-      console.error('❌ Gemini API Error:', errorData)
-      // Provide a clearer message when model is not found/unsupported
-      const apiMessage = errorData.error?.message || ''
-      if (apiMessage.toLowerCase().includes('not found') || apiMessage.toLowerCase().includes('not supported')) {
-        throw new Error(`Model "${GEMINI_MODEL}" is unavailable for generateContent. Set VITE_GEMINI_MODEL to one of: "gemini-1.5-flash-latest", "gemini-1.5-pro-latest", or "gemini-pro". Original: ${apiMessage}`)
+      return {
+        success: true,
+        reply: response.data.reply
       }
-      throw new Error(apiMessage || 'Failed to get response from Gemini')
-    }
-
-    const data = await response.json()
-    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I could not generate a response.'
-
-    console.log('✅ Gemini Response:', {
-      message,
-      reply,
-      usage: data.usageMetadata
-    })
-
-    return {
-      success: true,
-      reply
+    } else {
+      console.error('❌ Gemini API Error:', response.data.error)
+      return {
+        success: false,
+        error: response.data.error || 'Failed to get response from AI assistant'
+      }
     }
   } catch (error) {
-    console.error('❌ Error calling Gemini API:', error)
+    console.error('❌ Error calling backend Gemini API:', error)
+    
+    // Handle different error types
+    let errorMessage = 'Failed to communicate with AI assistant'
+    
+    if (error.response) {
+      // Server responded with error
+      errorMessage = error.response.data?.error || error.response.statusText || 'Server error'
+    } else if (error.request) {
+      // Request was made but no response
+      errorMessage = 'Cannot connect to server. Please make sure the backend server is running on http://localhost:3000'
+    } else {
+      // Something else happened
+      errorMessage = error.message || 'An unexpected error occurred'
+    }
+
     return {
       success: false,
-      error: error.message || 'Failed to communicate with AI assistant'
+      error: errorMessage
     }
   }
 }
